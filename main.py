@@ -6,25 +6,27 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-def graphic(dict):
+def graphic(dict, name):
     for k in ['y','z','x']:
         while len(dict[k]) < len(dict['a']):
             addtoDict(dict,k,dict[k][-1])
-    for k in range(len(dict["a"])): map(lambda x: addtoDict(dict,'f'+str(k),func(dict[x][k])), ['a','b','y','z','x'])
+    for k in range(len(dict["a"])): map(lambda x: addtoDict(dict,'f'+x,func(dict[x][k])), ['a','b','y','z','x'])
     df = pd.DataFrame(dict)
-    x = np.linspace(-10, 10, 200)
-    '''
-    добавить сетку и посмотреть параметры строка стобец нужно через func прогонять каждый элемент 
-    нарисовать сетку обычных графиков добавить точки
-    '''
+    for k in ['a', 'b', 'y', 'z', 'x']:df[str('f'+k)] = list(map(func, dict[k]))
+    print(df)
+    x = np.linspace(-2, 2, 200)
     graf = sns.FacetGrid(data=df, col='a')
     for elem in range(len(df['a'])): graf.axes[0,elem].plot(x, x3 * (x ** 3) + x2 * (x ** 2) + x1 * x + c)
-    graf.map(plt.scatter, 'a', (func(elem) for elem in df['a']), color='red', alpha=0.3)
-    graf.map(plt.scatter, 'b', (func(elem) for elem in df['b']), color='red', alpha=0.3)
-    graf.map(plt.scatter, 'y', (func(elem) for elem in df['y']), color='green', alpha=0.3)
-    graf.map(plt.scatter, 'z', (func(elem) for elem in df['z']), color='blue', alpha=0.3)
-    graf.map(plt.scatter, 'x', (func(elem) for elem in df['x']), color='orange', alpha=0.3)
-    #for i in range(len(df['a'])): graf.axes[i].plot(x, x3 * (x ** 3) + x2 * (x ** 2) + x1 * x + c)
+    plt.xlim(interval)
+    plt.ylim(min(df['fx']),max(df['fa'][0],df['fb'][0]))
+    graf.axes[0, len(df['a']) - 1].plot(ylim =(-6,-5))
+    graf.fig.set_size_inches(15,15)
+    graf.map(plt.scatter, 'a', 'fa', color='red', alpha=0.4)
+    graf.map(plt.scatter, 'b', 'fb', color='red', alpha=0.4)
+    graf.map(plt.scatter, 'y', 'fy', color='green', alpha=0.4)
+    graf.map(plt.scatter, 'z', 'fz', color='blue', alpha=0.4)
+    graf.map(plt.scatter, 'x', 'fx', color='orange', alpha=0.4)
+    graf.set(title=name)
     plt.show()
 
 def getNumber02(x, type):  # проверка на ввод числа
@@ -149,13 +151,13 @@ E = 0,2
 z = lambda x, y: "+" + str(x) + y if x > 0 else ("-" + str(x) + y if x < 0 else "")
 func = lambda x: x3 * (x ** 3) + x2 * (x ** 2) + x1 * x + c
 x3,x2,x1,c,interval,e = 2,9,0,-6,[-1,1],0.2
-print(f'Ваша функция f(x) = {("".join(list(map(z, [x3, x2, x1, c], ["x^3", "x^2", "x", ""])))).lstrip("+")}')
+print(f'Ваша функция f(x) = {("".join(list(map(z, [x3, x2, x1], ["x^3", "x^2", "x"])))+str(c)).lstrip("+")}')
 
 '''
 все элементы словаря должны быть одинаковой длинны
 '''
 #p = pd.DataFrame(methodHalfDivision(fX, interval, e))
 #print(f'type: {type(p["a"][0])}')
-graphic(methodHalfDivision(interval, e))
+graphic(methodHalfDivision(interval, e), 'Метод половинного деления')
 #methodGoldenSecion(fX, interval, e)
 #methodFibonachi(fX, interval, e)
