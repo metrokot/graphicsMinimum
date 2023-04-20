@@ -11,15 +11,16 @@ def graphic(dict, name):
         while len(dict[k]) < len(dict['a']):
             addtoDict(dict,k,dict[k][-1])
     for k in range(len(dict["a"])): map(lambda x: addtoDict(dict,'f'+x,func(dict[x][k])), ['a','b','y','z','x'])
+    for k in range(len(dict["a"])): addtoDict(dict,'k',k)
     df = pd.DataFrame(dict)
     for k in ['a', 'b', 'y', 'z', 'x']:df[str('f'+k)] = list(map(func, dict[k]))
-    print(df)
-    x = np.linspace(-2, 2, 200)
-    graf = sns.FacetGrid(data=df, col='a')
-    for elem in range(len(df['a'])): graf.axes[0,elem].plot(x, x3 * (x ** 3) + x2 * (x ** 2) + x1 * x + c)
+    x = np.linspace(1, 3, 200)
+    graf = sns.FacetGrid(data=df, col='k')#исправить так как если в а лежит 2 одинаковые строчки(крайняя точка не изменилась) то длина сокращается
+    #нужно брать нулевой столбец(где порядковый номер строки)
+    for elem in range(len(df['a'])): graf.axes[0,elem].plot(x, (x3 * (x ** 3) + x2 * (x ** 2) + x1 * x + c))
     plt.xlim(interval)
-    plt.ylim(min(df['fx']),max(df['fa'][0],df['fb'][0]))
-    graf.axes[0, len(df['a']) - 1].plot(ylim =(-6,-5))
+    plt.ylim(-21,-14)
+    #graf.axes[0, len(df['a']) - 1].plot(ylim =(-6,-5))
     graf.fig.set_size_inches(15,15)
     graf.map(plt.scatter, 'a', 'fa', color='red', alpha=0.4)
     graf.map(plt.scatter, 'b', 'fb', color='red', alpha=0.4)
@@ -98,17 +99,19 @@ def methodGoldenSecion(interval, accuracy):
         print(
             f'\tновый отрезок от {dictGoldSec["a"][k + 1]} до {dictGoldSec["b"][k + 1]} расстояние {(l := dictGoldSec["a"][k + 1] - dictGoldSec["b"][k + 1])}{" > " if abs(l) > accuracy else " <= "}{accuracy}')
     print(
-        f'В качестве приближения  точка x: {addtoDict(dictGoldSec, "x", (abs(dictGoldSec["a"][k + 1] - dictGoldSec["b"][k + 1]) / 2))} f(x) = {func(dictGoldSec["x"][-1])}')
+        f'В качестве приближения  точка x: {addtoDict(dictGoldSec, "x", (abs(dictGoldSec["a"][k] + dictGoldSec["b"][k]) / 2))} f(x) = {func(dictGoldSec["x"][-1])}')
     return dictGoldSec
 
 
 def methodFibonachi(interval, accuracy):
-    massFibonachi = fibonachi(abs(interval[0] - interval[1]) / accuracy)
+    massFibonachi = fibonachi((abs(interval[0] - interval[1]) / accuracy))
+    dictFibonachi = {"a": [interval[0]], "b": [interval[1]],"x": []}
     hardf = lambda a, b, up, down: int(dictFibonachi['a'][a] + (massFibonachi[up] / massFibonachi[down]) * (
             dictFibonachi['b'][b] - dictFibonachi['a'][a]))
-    dictFibonachi = {"a": [interval[0]], "b": [interval[1]], "y": [hardf(0, 0, -3, -1)], "z": [hardf(0, 0, -2, -1)],
-                     "x": []}
-    while (k := len(dictFibonachi['a'])) != len(massFibonachi) - 3:
+    dictFibonachi['y'] = [hardf(0, 0, -3, -1)]
+    dictFibonachi['z'] = [hardf(0, 0, -2, -1)]
+    print(dictFibonachi['y'])
+    while (k := len(dictFibonachi['a'])-1) != len(massFibonachi) - 3:
         print(f'''
     Метод Фибоначи: Итерация {k}
         y = {dictFibonachi["y"][k]}; z = {dictFibonachi["z"][k]}
@@ -133,8 +136,8 @@ def methodFibonachi(interval, accuracy):
 
 def fibonachi(number):
     fib = [1, 1]
-    while number < fib[-1]:
-        fib.append(fib[-1] + fib[-2])
+    while fib[-1] < number:
+        fib.append((fib[-1] + fib[-2]))
     return fib
 
 
@@ -145,19 +148,14 @@ L_0 = [1,3]
 E = 0,2
 '''
 
-#x3, x2, x1, c = map(lambda x: getNumber02(f'коэффицент для {x} = ', 'int'), ["x^3", "x^2", "x", "c"])
-#interval = list(map(lambda x: getNumber02(f'{x} интервала ', 'int'), ["начало", "конец"]))
-#e = getNumber02('точность E ', 'float')
-z = lambda x, y: "+" + str(x) + y if x > 0 else ("-" + str(x) + y if x < 0 else "")
+x3, x2, x1, c = map(lambda x: getNumber02(f'коэффицент для {x} = ', 'int'), ["x^3", "x^2", "x", "c"])
+interval = list(map(lambda x: getNumber02(f'{x} интервала ', 'int'), ["начало", "конец"]))
+e = getNumber02('точность E ', 'float')
+z = lambda x, y: "+" + str(x) + y if x > 1 else (str(x) + y if x < 0 else "")
 func = lambda x: x3 * (x ** 3) + x2 * (x ** 2) + x1 * x + c
-x3,x2,x1,c,interval,e = 2,9,0,-6,[-1,1],0.2
+#x3,x2,x1,c,interval,e = 2,9,0,-6,[-1,1],0.2
 print(f'Ваша функция f(x) = {("".join(list(map(z, [x3, x2, x1], ["x^3", "x^2", "x"])))+str(c)).lstrip("+")}')
-
-'''
-все элементы словаря должны быть одинаковой длинны
-'''
-#p = pd.DataFrame(methodHalfDivision(fX, interval, e))
-#print(f'type: {type(p["a"][0])}')
+print(fibonachi(10))
 graphic(methodHalfDivision(interval, e), 'Метод половинного деления')
-#methodGoldenSecion(fX, interval, e)
-#methodFibonachi(fX, interval, e)
+graphic(methodGoldenSecion(interval, e), 'Метод золотого сечения')
+graphic(methodFibonachi(interval, e), 'Метод Фибоначи')
