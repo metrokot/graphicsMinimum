@@ -155,7 +155,7 @@ z = lambda x, y: "+" + str(x) + y if x > 1 else (str(x) + y if x < 0 else "")
 func = lambda x: x3 * (x ** 3) + x2 * (x ** 2) + x1 * x + c
 #x3,x2,x1,c,interval,e = 2,9,0,-6,[-1,1],0.2
 print(f'Ваша функция f(x) = {("".join(list(map(z, [x3, x2, x1], ["x^3", "x^2", "x"])))+str(c)).lstrip("+")}')
-print(fibonachi(10))
+
 graphic(methodHalfDivision(interval, e), 'Метод половинного деления')
 graphic(methodGoldenSecion(interval, e), 'Метод золотого сечения')
 graphic(methodFibonachi(interval, e), 'Метод Фибоначи')
