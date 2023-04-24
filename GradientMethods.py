@@ -1,3 +1,21 @@
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
+def graphic(dictionary, name):#построить окружность(?)
+    df = pd.DataFrame(dictionary)
+    x = np.linspace(-10, 10, 200)
+    y = np.linspace(-10, 10, 200)
+    for i in range(len(dictionary['f'])): graf = plt.plot((x1 * (x ** 2) + x1x2 *x*y + (y**2) * x2 - dictionary['f'][i]),(x,y))
+    sns.scatter('x1', 'x2', color='orange', alpha=0.4)
+    sns.set(title=name)
+    plt.show()
+
+
+
+
 def getNumber02(x, type):  # проверка на ввод числа
     while True:
         if type == 'int':
