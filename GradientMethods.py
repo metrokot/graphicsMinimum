@@ -65,9 +65,10 @@ def gradientDown():
         Условие 2: {(usl2:=abs(
                 fxk1 - addtoDict(dictGradDown,'f',fxk)))} {'< '+str(e[1]) if usl2<e[1] else '≥ '+str(e[1])+' Не'} удовлетворяет
         ''')
-        if (usl1 < e[1] and usl2 < e[1]):break
+        if (usl1 < e[1] and usl2 < e[1]):
+            if(float(norm(dictGradDown["x1"][k]-dictGradDown["x1"][k-1],dictGradDown["x2"][k]-dictGradDown["x2"][k-1])) ** 0.5<e[1] and abs(fxk - dictGradDown["f"][k-1])<e[1]):break
         k+=1
-    print(f'Ответ k = {len(dictGradDown["x1"])-1}; x {(dictGradDown["x1"][-1],dictGradDown["x1"][-1])} {"в связи с ограничением M" if k>=M else ""}')
+    print(f'Ответ k = {len(dictGradDown["x1"])-1}; x {(dictGradDown["x1"][-1],dictGradDown["x2"][-1])} {"в связи с ограничением M" if k>=M else ""}')
 
 def fastgradientDown():
     dictFastGrad,k = {'x1':[x0[0]],'x2':[x0[1]], 'f':[func(x0[0],x0[1])]},0
