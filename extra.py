@@ -1,15 +1,14 @@
-# This is a sample Python script.
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+fig = plt.figure()
+ax = fig.add_subplot(1,1,1)
+x1,x1x2,x2,x0,e,M=1,0.5,5,(0,0.5),(0.15,0.2),10
+#x1,x1x2,x2,x0,e,M=2,1,1,(0.5,1),(0.1,0.15),10
+sns.set_theme(style="whitegrid")
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+x, y = np.meshgrid(np.linspace(-5, 5, 100), np.linspace(-5, 5, 100))
+z = x1 * (x ** 2) + x1x2 *x*y + (y**2) * x2 -9
+ax.contour(x, y, (x1 * (x ** 2) + x1x2 *x*y + (y**2) * x2 -9))
 
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+plt.show()
