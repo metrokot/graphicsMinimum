@@ -2,20 +2,13 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from math import sqrt
-#from scipy import stats
 
 
 def graphic(dictionary, name):#построить окружность(?)
-    df = pd.DataFrame(dictionary)
-    x = np.linspace(-10, 10, 200)
-    y = np.linspace(-10, 10, 200)
-
+    x, y = np.meshgrid(np.linspace(-2, 2, 50), np.linspace(-2, 2, 50))
+    plt.contour(x, y, (func(x, y)), levels=[i for i in dictionary['f'].reverse()])
     sns.set(title=name)
     plt.show()
-
-
-
 
 def getNumber02(x, type):  # проверка на ввод числа
     while True:
@@ -36,8 +29,18 @@ def getNumber02(x, type):  # проверка на ввод числа
 def addtoDict(dictionary, name, param):
     dictionary[name] = dictionary.get(name, []) + [param]
     return dictionary[name][-1]
-def extremumMin():#тут возвращается число
-    pass
+def extremumMin(x,y,a,b,c):
+    exp1 = lambda : 2*a*b**2*x**2+4*a*b*c*x*y+b**3*x*y+2*b**2*c*y**2
+    exp2 = lambda: b*x**2+4*b*c*x*y+4*c**2*y**2
+    exp3 = lambda: -2*b**2*c*x**2-8*b*c**2*x*y-8*c**3*y**2
+    v1 = lambda: 8*a**3*x**2+8*a**2*b*x*y+2*a*b**2*y**2
+    v2 = lambda: 2*a*b**2*x**2+4*a*b*c*x*y+b**3*x*y+2*b**2*c*y**2
+    v3 = lambda: 4*a**2*x**2+4*a*b*x*y+b**2*y**2
+    t1 = (v3()+(exp2()*v2())/exp3())/(v1()+(exp1()*v2())/exp3())
+    t2 = (t1*exp1()-exp2())/exp3()
+    if v1()<0 and exp1()<0:
+        print('Минимум')
+        return t1,t2
 
 def gradientDown():
     dictGradDown,k = {'x1':[x0[0]],'x2':[x0[1]], 'f':[]},0
@@ -69,6 +72,8 @@ def gradientDown():
             if(float(norm(dictGradDown["x1"][k]-dictGradDown["x1"][k-1],dictGradDown["x2"][k]-dictGradDown["x2"][k-1])) ** 0.5<e[1] and abs(fxk - dictGradDown["f"][k-1])<e[1]):break
         k+=1
     print(f'Ответ k = {len(dictGradDown["x1"])-1}; x {(dictGradDown["x1"][-1],dictGradDown["x2"][-1])} {"в связи с ограничением M" if k>=M else ""}')
+    return dictGradDown
+
 
 def fastgradientDown():
     dictFastGrad,k = {'x1':[x0[0]],'x2':[x0[1]], 'f':[func(x0[0],x0[1])]},0
@@ -81,9 +86,9 @@ def fastgradientDown():
         ''')
         if gr < e[1]: break
         print(f'''
-        Текущее значение tk {(tk:=extremumMin())}
-        x(k+1) = {(xk1 := [dictFastGrad['x1'][k] - tk * int(dfxk[0]), dictFastGrad['x2'][k] - tk * int(dfxk[1])])}
-        Условие 1: {(usl1 := int(norm(dictFastGrad["x1"][k + 1] - dictFastGrad["x1"][k], dictFastGrad["x2"][k + 1] - dictFastGrad["x2"][k])) ** 0.5)} {'< ' + str(e[1]) if usl1 < e[1] else '≥ ' + str(e[1]) + ' Не'} удовлетворяет
+        Текущее значение tk {(tk:=extremumMin(dictFastGrad['x1'][k],dictFastGrad['x2'][k],x1,x1x2,x2))}
+        x(k+1) = {(xk1 := [dictFastGrad['x1'][k] - tk[0] * float(dfxk[0]), dictFastGrad['x2'][k] - tk[1] * float(dfxk[1])])}
+        Условие 1: {(usl1 := float(norm(dictFastGrad["x1"][k + 1] - dictFastGrad["x1"][k], dictFastGrad["x2"][k + 1] - dictFastGrad["x2"][k])) ** 0.5)} {'< ' + str(e[1]) if usl1 < e[1] else '≥ ' + str(e[1]) + ' Не'} удовлетворяет
         Условие 2: {(usl2 := abs(
             func(xk1[0],xk1[1]) - addtoDict(dictFastGrad,'f',func(dictFastGrad["x1"][k],dictFastGrad["x2"][k]))))} {'< ' + str(e[1]) if usl2 < e[1] else '≥ ' + str(e[1]) + ' Не'} удовлетворяет
         ''')
@@ -104,5 +109,5 @@ func = lambda x,y: x1 * (float(x) ** 2) + x1x2 *x*y + (float(y)**2) * x2
 derivF = lambda x,y: [2*x1 * x + x1x2*y, x1x2*x + y * x2*2]
 norm = lambda x,y:x**2+y**2
 print(f'Ваша функция f(x) = {("".join(list(map(z, [x1, x1x2, x2], ["(x_1)^2", "(x_1)*(x_2)", "(x_2)^2"])))).lstrip("+").lstrip("1")}')
-gradientDown()
+graphic(gradientDown(),'Метод градиентного спуска с постоянным шагом')
 #fastgradientDown()
