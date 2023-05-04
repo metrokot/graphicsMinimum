@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 
 def graphic(dictionary, name):#построить окружность(?)
-    x, y = np.meshgrid(np.linspace(-2, 2, 50), np.linspace(-2, 2, 50))
+    x, y = np.meshgrid(np.linspace(-1, 1, 100), np.linspace(-1, 1, 100))
     plt.contour(x, y, func(x,y), levels=[i for i in reversed(dictionary['f'])])
     plt.title(name)
     plt.show()
@@ -72,7 +72,7 @@ def gradientDown():
         if (usl1 < e[1] and usl2 < e[1]):
             if(float(norm(dictGradDown["x1"][k]-dictGradDown["x1"][k-1],dictGradDown["x2"][k]-dictGradDown["x2"][k-1])) ** 0.5<e[1] and abs(fxk - dictGradDown["f"][k-1])<e[1]):break
         k+=1
-    print(f'Ответ k = {len(dictGradDown["x1"])-1}; x {(dictGradDown["x1"][-1],dictGradDown["x2"][-1])} {"в связи с ограничением M" if k>=M else ""}')
+    print(f'Ответ k = {len(dictGradDown["x1"])-1}; x {(dictGradDown["x1"][-1],dictGradDown["x2"][-1])} {"в связи с ограничением M" if k>=M else ""} f = {addtoDict(dictGradDown, "f",func(dictGradDown["x1"][-1], dictGradDown["x1"][-1]))}')
     return dictGradDown
 
 
@@ -98,19 +98,19 @@ def fastgradientDown():
             if (float(norm(dictFastGrad["x1"][k] - dictFastGrad["x1"][k - 1],dictFastGrad["x2"][k] - dictFastGrad["x2"][k - 1])) ** 0.5 < e[1] and abs(dictFastGrad["f"][k] - dictFastGrad["f"][k - 1]) < e[1]): break
         k += 1
     print(
-        f'Ответ k = {len(dictFastGrad["x1"]) - 1}; x {(dictFastGrad["x1"][-1], dictFastGrad["x1"][-1])} {"в связи с ограничением M" if k >= M else ""}')
+        f'Ответ k = {len(dictFastGrad["x1"]) - 1}; x {(dictFastGrad["x1"][-1], dictFastGrad["x1"][-1])} {"в связи с ограничением M" if k >= M else ""} f = {addtoDict(dictFastGrad, "f",func(dictFastGrad["x1"][-1], dictFastGrad["x1"][-1]))}')
     return dictFastGrad
 
-#x1, x1x2, x2 = map(lambda x: getNumber02(f'коэффицент для {x} = ', 'int'), ["(x_1)^2", "(x_1)*(x_2)", "(x_2)^2"])
-#x0 = list(map(lambda x: getNumber02(f'начальную точку {x} ', 'float'), ["x", "y"]))
-#e = list(map(lambda x: getNumber02(f'точность {x} ', 'float'), ["e1", "e2"]))
-#M = getNumber02('предел числа операций', 'int')
-x1,x1x2,x2,x0,e,M=1,0.5,5,(0,0.5),(0.15,0.2),10
-#x1,x1x2,x2,x0,e,M=2,1,1,(0.5,1),(0.1,0.15),10
+x1, x1x2, x2 = map(lambda x: getNumber02(f'коэффицент для {x} = ', 'float'), ["(x_1)^2", "(x_1)*(x_2)", "(x_2)^2"])
+x0 = list(map(lambda x: getNumber02(f'начальную точку {x} ', 'float'), ["x", "y"]))
+e = list(map(lambda x: getNumber02(f'точность {x} ', 'float'), ["e1", "e2"]))
+M = getNumber02('предел числа операций', 'int')
+#x1,x1x2,x2,x0,e,M=1,0.5,5,(0,0.5),(0.15,0.2),10 #вариант 19
+#x1,x1x2,x2,x0,e,M=2,1,1,(0.5,1),(0.1,0.15),10 #пример
 z = lambda x, y: "+" + str(x) + y if x > 0 else (str(x) + y if x < 0 else '')
 func = lambda x,y: x1 * (x ** 2) + x1x2 *x*y + (y**2) * x2
 derivF = lambda x,y: [2*x1 * x + x1x2*y, x1x2*x + y * x2*2]
 norm = lambda x,y:x**2+y**2
 print(f'Ваша функция f(x) = {("".join(list(map(z, [x1, x1x2, x2], ["(x_1)^2", "(x_1)*(x_2)", "(x_2)^2"])))).lstrip("+").lstrip("1")}')
-#graphic(gradientDown(),'Метод градиентного спуска с постоянным шагом')
+graphic(gradientDown(),'Метод градиентного спуска с постоянным шагом')
 graphic(fastgradientDown(),'Метод быстрого градиентного спуска')
